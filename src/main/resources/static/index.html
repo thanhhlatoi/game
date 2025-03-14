@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ninja School Game</title>
+</head>
+<body>
+    <h1>Ninja School Online</h1>
+    <button onclick="move('up')">Move Up</button>
+    <div id="log"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+    <script>
+        const socket = new SockJS('/game');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/topic/players', function (response) {
+                document.getElementById('log').innerText = response.body;
+            });
+        });
+
+        function move(direction) {
+            stompClient.send("/app/move", {}, JSON.stringify({name: "Ninja", x: 100, y: 100}));
+        }
+    </script>
+</body>
+</html>
